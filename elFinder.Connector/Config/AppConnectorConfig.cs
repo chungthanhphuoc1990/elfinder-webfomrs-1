@@ -1,0 +1,78 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Configuration;
+
+namespace elFinder.Connector.Config
+{
+	public class AppConnectorConfig : ConfigurationSection, IConnectorConfig
+	{
+		private static AppConnectorConfig _config = (AppConnectorConfig)System.Configuration.ConfigurationManager.GetSection( "elFinder" );
+
+		public static AppConnectorConfig Instance
+		{
+			get { return _config; }
+		}
+
+		#region IConnectorConfig Members
+
+		[ConfigurationProperty( "apiVersion", IsRequired = true )]
+		public string ApiVersion
+		{
+			get { return (string)_config[ "apiVersion" ]; }
+		}
+
+		[ConfigurationProperty( "rootDirectoryName", IsRequired = true )]
+		public string RootDirectoryName
+		{
+			get { return (string)_config[ "rootDirectoryName" ]; }
+		}
+
+		[ConfigurationProperty( "localFSRootDirectoryPath", IsRequired = true )]
+		public string LocalFSRootDirectoryPath
+		{
+			get { return (string)_config[ "localFSRootDirectoryPath" ]; }
+		}
+
+		[ConfigurationProperty( "localFSThumbsDirectoryPath", IsRequired = true )]
+		public string LocalFSThumbsDirectoryPath
+		{
+			get { return (string)_config[ "localFSThumbsDirectoryPath" ]; }
+		}
+
+		[ConfigurationProperty( "defaultVolumeName", IsRequired = true )]
+		public string DefaultVolumeName
+		{
+			get { return (string)_config[ "defaultVolumeName" ]; }
+		}
+
+		[ConfigurationProperty( "uploadMaxSize", IsRequired = true )]
+		public string UploadMaxSize
+		{
+			get { return (string)_config[ "uploadMaxSize" ]; }
+		}
+
+		[ConfigurationProperty( "maxTreeLevel", IsRequired = false, DefaultValue=1 )]
+		public int MaxTreeLevel
+		{
+			get { return (int)_config[ "maxTreeLevel" ]; }
+		}
+
+		[ConfigurationProperty( "baseUrl", IsRequired = true )]
+		public string BaseUrl 
+		{
+			get { return (string)_config[ "baseUrl" ]; } 
+		}
+
+		[ConfigurationProperty( "baseThumbsUrl", IsRequired = false )]
+		public string BaseThumbsUrl 
+		{
+			get { return (string)_config[ "baseThumbsUrl" ]; } 
+		}
+
+		#endregion
+
+
+	}
+}
