@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>elFinder file manager</h2>
+
+<div class="fileManager">finder</div>   
+
+ <script type="text/javascript" charset="utf-8">
+     $(function () {
+         $('.fileManager').elfinder({
+             url: '@Url.Content("~/elfinder.connector")',
+             height: 600
+         });
+     });
+</script>
