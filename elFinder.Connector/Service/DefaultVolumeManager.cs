@@ -53,6 +53,8 @@ namespace elFinder.Connector.Service
 			if( _hashedVolumes == null || _hashedVolumes.Count == 0 || string.IsNullOrWhiteSpace( hash ) )
 				return null;
 			string foundKey = _hashedVolumes.Keys.FirstOrDefault( x => hash.StartsWith( x, StringComparison.OrdinalIgnoreCase ) );
+			if( string.IsNullOrWhiteSpace( foundKey ) )
+				return null;
 			return _hashedVolumes[ foundKey ];
 		}
 
