@@ -35,6 +35,9 @@ namespace elFinder.Connector.Service
 		bool DeleteFile( Model.FileModel fileToRemove );
 		bool DeleteDirectory( Model.DirectoryModel directoryToRemove );
 
+		Model.FileModel CopyFile( Model.FileModel fileToCopy, string destinationDirectory, bool cut );
+		Model.DirectoryModel CopyDirectory( Model.DirectoryModel directoryToCopy, string destinationDirectory, bool cut );
+
 		Model.FileModel[] SaveFiles( string targetDirHash, HttpFileCollection files );
 	}
 }

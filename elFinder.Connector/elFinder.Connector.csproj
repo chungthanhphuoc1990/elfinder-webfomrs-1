@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Command\MkfileCommand.cs" />
     <Compile Include="Command\MkdirCommand.cs" />
+    <Compile Include="Command\PasteCommand.cs" />
     <Compile Include="Command\RenameCommand.cs" />
     <Compile Include="Command\RmCommand.cs" />
     <Compile Include="Command\TreeCommand.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="Model\ObjectModel.cs" />
     <Compile Include="Model\OptionsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Response\PasteResponse.cs" />
     <Compile Include="Response\RmResponse.cs" />
     <Compile Include="Response\MkfileResponse.cs" />
     <Compile Include="Response\MkdirResponse.cs" />

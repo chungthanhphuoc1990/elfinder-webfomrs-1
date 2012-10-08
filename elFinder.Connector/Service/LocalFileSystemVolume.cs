@@ -359,12 +359,118 @@ namespace elFinder.Connector.Service
 
 			try
 			{
-				Directory.Delete( path );
+				Directory.Delete( path, true );
 				return true;
 			}
 			catch
 			{
 				return false;
+			}
+		}
+
+		public Model.FileModel CopyFile( Model.FileModel fileToCopy, string destinationDirectory, 
+			bool cut )
+		{
+			if( fileToCopy == null || string.IsNullOrWhiteSpace( destinationDirectory ) )
+				return null;
+			if( !Directory.Exists( destinationDirectory ) )
+				return null;
+
+			string path = DecodeHashToPath( fileToCopy.Hash );
+			FileInfo fi = new FileInfo( path );
+			// compose final directory
+			string destDir = destinationDirectory;
+			if( destDir.Last() != Path.DirectorySeparatorChar )
+				destDir += Path.DirectorySeparatorChar;
+			string newPath = destDir + fi.Name;
+
+			if( File.Exists( newPath ) )
+				return null;
+
+			try
+			{
+				// check for cut or copy
+				if( cut )
+					File.Move( path, newPath );
+				else
+					File.Copy( path, newPath );
+
+				FileInfo newFileInfo = new FileInfo( newPath );
+				return createFileModel( newFileInfo, EncodePathToHash( destDir ) );
+			}
+			catch
+			{
+				return null;
+			}
+		}
+
+		public Model.DirectoryModel CopyDirectory( Model.DirectoryModel directoryToCopy, string destinationDirectory,
+			bool cut )
+		{
+			if( directoryToCopy == null || string.IsNullOrWhiteSpace( destinationDirectory ) )
+				return null;
+			if( !Directory.Exists( destinationDirectory ) )
+				return null;
+
+			string path = DecodeHashToPath( directoryToCopy.Hash );
+			DirectoryInfo di = new DirectoryInfo( path );
+			// compose final directory
+			string destDir = destinationDirectory;
+			if( destDir.Last() != Path.DirectorySeparatorChar )
+				destDir += Path.DirectorySeparatorChar;
+			string newPath = destDir + di.Name;
+
+			if( Directory.Exists( newPath ) )
+				return null;
+
+			try
+			{
+				if( cut )
+					Directory.Move( path, newPath );
+				else
+					copyDirectory( path, newPath, true );
+				// get new parent dir
+				DirectoryInfo newDirInfo = new DirectoryInfo( newPath );
+				if( newDirInfo.Parent == null )
+					return null;
+				string parentDir = newDirInfo.Parent.FullName;
+				if( parentDir.Last() != Path.DirectorySeparatorChar )
+					parentDir += Path.DirectorySeparatorChar;
+
+				return createDirectoryModel( newDirInfo, EncodePathToHash( newDirInfo.FullName ),
+					EncodePathToHash( parentDir ) );
+			}
+			catch
+			{
+				return null;
+			}
+		}
+
+		private static void copyDirectory( string sourceDirName, string destDirName, bool copySubDirs )
+		{
+			DirectoryInfo dir = new DirectoryInfo( sourceDirName );
+			DirectoryInfo[] dirs = dir.GetDirectories();
+
+			if( !dir.Exists )
+				return;
+
+			if( !Directory.Exists( destDirName ) )
+				Directory.CreateDirectory( destDirName );
+
+			FileInfo[] files = dir.GetFiles();
+			foreach( FileInfo file in files )
+			{
+				string temppath = Path.Combine( destDirName, file.Name );
+				file.CopyTo( temppath, false );
+			}
+
+			if( copySubDirs )
+			{
+				foreach( DirectoryInfo subdir in dirs )
+				{
+					string temppath = Path.Combine( destDirName, subdir.Name );
+					copyDirectory( subdir.FullName, temppath, copySubDirs );
+				}
 			}
 		}
 
