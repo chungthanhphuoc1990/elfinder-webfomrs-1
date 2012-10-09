@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Command\GetCommand.cs" />
     <Compile Include="Command\MkfileCommand.cs" />
     <Compile Include="Command\MkdirCommand.cs" />
     <Compile Include="Command\PasteCommand.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="Model\ObjectModel.cs" />
     <Compile Include="Model\OptionsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Response\GetResponse.cs" />
     <Compile Include="Response\PasteResponse.cs" />
     <Compile Include="Response\RmResponse.cs" />
     <Compile Include="Response\MkfileResponse.cs" />

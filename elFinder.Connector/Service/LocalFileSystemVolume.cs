@@ -474,6 +474,22 @@ namespace elFinder.Connector.Service
 			}
 		}
 
+		public string GetTextFileContent( Model.FileModel fileToGet )
+		{
+			if( fileToGet == null )
+				return null;
+
+			string path = DecodeHashToPath( fileToGet.Hash );
+			try
+			{
+				return File.ReadAllText( path );
+			}
+			catch
+			{
+				return null;
+			}
+		}
+
 		public Model.FileModel[] SaveFiles( string targetDirHash, HttpFileCollection files )
 		{
 			if( files == null )

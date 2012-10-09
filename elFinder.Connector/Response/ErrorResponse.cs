@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 
 namespace elFinder.Connector.Response
 {
-	[JsonObject]
 	public class ErrorResponse : JSONResponse
 	{
 		[JsonProperty("error")]

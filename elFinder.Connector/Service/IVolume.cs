@@ -39,5 +39,7 @@ namespace elFinder.Connector.Service
 		Model.DirectoryModel CopyDirectory( Model.DirectoryModel directoryToCopy, string destinationDirectory, bool cut );
 
 		Model.FileModel[] SaveFiles( string targetDirHash, HttpFileCollection files );
+
+		string GetTextFileContent( Model.FileModel fileToGet );
 	}
 }
