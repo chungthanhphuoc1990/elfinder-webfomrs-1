@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Configuration;
+using System.Drawing;
 
 namespace elFinder.Connector.Config
 {
@@ -71,8 +72,24 @@ namespace elFinder.Connector.Config
 			get { return (string)_config[ "baseThumbsUrl" ]; } 
 		}
 
+		[ConfigurationProperty( "duplicateFilePattern", IsRequired = true )]
+		public string DuplicateFilePattern
+		{
+			get { return (string)_config[ "duplicateFilePattern" ]; } 
+		}
+
+		[ConfigurationProperty( "duplicateDirectoryPattern", IsRequired = true )]
+		public string DuplicateDirectoryPattern
+		{
+			get { return (string)_config[ "duplicateDirectoryPattern" ]; } 
+		}
+
+		[ConfigurationProperty( "thumbsSize", IsRequired = true )]
+		public Size ThumbsSize 
+		{
+			get { return (Size)_config[ "thumbsSize" ]; }  
+		}
+
 		#endregion
-
-
 	}
 }

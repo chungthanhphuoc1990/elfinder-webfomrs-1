@@ -6,10 +6,41 @@ using Newtonsoft.Json;
 
 namespace elFinder.Connector.Model
 {
+	public class TmbConverter : JsonConverter
+	{
+		public override void WriteJson( JsonWriter writer, object value, JsonSerializer serializer )
+		{
+			if( value == null )
+				return;
+			string valStr = value.ToString();
+			if( !string.IsNullOrWhiteSpace( valStr ) )
+			{
+				if( valStr == "1" )
+					writer.WriteValue( 1 );
+				else
+					writer.WriteValue( valStr );
+			}
+		}
+
+		public override object ReadJson( JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer )
+		{
+			throw new NotImplementedException();
+		}
+
+		public override bool CanConvert( Type objectType )
+		{
+			return objectType == typeof( string );
+		}
+	}
+
 	[JsonObject]
 	public class FileModel : ObjectModel
 	{
-		public FileModel( string name, string hash, long size, string parentHash, 
+		[JsonProperty( "tmb", NullValueHandling=NullValueHandling.Ignore )]
+		[JsonConverter(typeof(TmbConverter) )]
+		public string Thumbnail { get; protected set; }
+
+		public FileModel( string name, string thumbnailName, string hash, long size, string parentHash, 
 			DateTime dateModified, string volumeId, bool isReadable, bool isWritable, bool isLocked )
 		{
 			Name = name;
@@ -23,6 +54,7 @@ namespace elFinder.Connector.Model
 
 			Mime = MimeTypes.GetContentType( name );
 			Size = size;
+			Thumbnail = thumbnailName;
 		}
 	}
 }

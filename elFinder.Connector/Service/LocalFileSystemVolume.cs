@@ -11,11 +11,14 @@ namespace elFinder.Connector.Service
 	{
 		private readonly Config.IConnectorConfig _config;
 		private readonly ICryptoService _cryptoService;
+		private readonly IImageEditorService _imageEditorService;
 
-		public LocalFileSystemVolume( Config.IConnectorConfig config, ICryptoService cryptoService )
+		public LocalFileSystemVolume( Config.IConnectorConfig config, ICryptoService cryptoService,
+			IImageEditorService imageEditorService )
 		{
 			_config = config;
 			_cryptoService = cryptoService;
+			_imageEditorService = imageEditorService;
 		}
 
 		#region IVolume Members
@@ -84,7 +87,22 @@ namespace elFinder.Connector.Service
 
 		private Model.FileModel createFileModel( FileInfo fi, string parentHash )
 		{
-			return new Model.FileModel( fi.Name, EncodePathToHash( fi.FullName ),
+			string hash = EncodePathToHash( fi.FullName );
+			string thumbnail = null;
+			// supports thumbnails?
+			if( _imageEditorService.CanGenerateThumbnail( fi.FullName ) )
+			{
+				if( !_config.LocalFSThumbsDirectoryPath.Contains( fi.DirectoryName ) )
+				{
+					// check if thumbnail exists - cache it maybe?
+					string thumbnailPath = _config.LocalFSThumbsDirectoryPath + Path.DirectorySeparatorChar + hash + fi.Extension;
+					if( File.Exists( thumbnailPath ) )
+						thumbnail = hash + fi.Extension;
+					else
+						thumbnail = "1"; // can create
+				}
+			}
+			return new Model.FileModel( fi.Name, thumbnail, hash,
 						fi.Length, parentHash, fi.LastWriteTime, Id,
 						true, !fi.IsReadOnly, false );
 		}
@@ -474,6 +492,72 @@ namespace elFinder.Connector.Service
 			}
 		}
 
+		public Model.FileModel DuplicateFile( Model.FileModel fileToDuplicate )
+		{
+			if( fileToDuplicate == null )
+				return null;
+
+			string path = DecodeHashToPath( fileToDuplicate.Hash );
+
+			FileInfo fi = new FileInfo( path );
+			// compose final file path
+			string destDir = fi.DirectoryName;
+			if( destDir.Last() != Path.DirectorySeparatorChar )
+				destDir += Path.DirectorySeparatorChar;
+			string newPath = destDir + string.Format( _config.DuplicateFilePattern, fi.Name, fi.Extension );
+			// new file should be here
+			if( File.Exists( newPath ) )
+				return null;
+
+			try
+			{
+				File.Copy( path, newPath );
+
+				FileInfo newFileInfo = new FileInfo( newPath );
+				return createFileModel( newFileInfo, EncodePathToHash( destDir ) );
+			}
+			catch
+			{
+				return null;
+			}
+		}
+
+		public Model.DirectoryModel DuplicateDirectory( Model.DirectoryModel directoryToDuplicate )
+		{
+			if( directoryToDuplicate == null )
+				return null;
+
+			string path = DecodeHashToPath( directoryToDuplicate.Hash );
+			DirectoryInfo di = new DirectoryInfo( path );
+			// compose final directory path
+			string destDir = di.Parent.FullName;
+			if( destDir.Last() != Path.DirectorySeparatorChar )
+				destDir += Path.DirectorySeparatorChar;
+			string newPath = destDir + string.Format( _config.DuplicateDirectoryPattern, di.Name );
+			// new directory shouldn't be here
+			if( Directory.Exists( newPath ) )
+				return null;
+
+			try
+			{
+				copyDirectory( path, newPath, true );
+				// get new parent dir
+				DirectoryInfo newDirInfo = new DirectoryInfo( newPath );
+				if( newDirInfo.Parent == null )
+					return null;
+				string parentDir = newDirInfo.Parent.FullName;
+				if( parentDir.Last() != Path.DirectorySeparatorChar )
+					parentDir += Path.DirectorySeparatorChar;
+
+				return createDirectoryModel( newDirInfo, EncodePathToHash( newDirInfo.FullName ),
+					EncodePathToHash( parentDir ) );
+			}
+			catch
+			{
+				return null;
+			}
+		}
+
 		public string GetTextFileContent( Model.FileModel fileToGet )
 		{
 			if( fileToGet == null )
@@ -483,6 +567,26 @@ namespace elFinder.Connector.Service
 			try
 			{
 				return File.ReadAllText( path );
+			}
+			catch
+			{
+				return null;
+			}
+		}
+
+		public Model.FileModel SetTextFileContent( Model.FileModel fileToModify, string content )
+		{
+			if( fileToModify == null )
+				return null;
+
+			string path = DecodeHashToPath( fileToModify.Hash );
+			if( !File.Exists( path ) )
+				return null;
+
+			try
+			{
+				File.WriteAllText( path, content );
+				return createFileModel( new FileInfo( path ), fileToModify.ParentHash );
 			}
 			catch
 			{
@@ -534,7 +638,7 @@ namespace elFinder.Connector.Service
 				if( string.IsNullOrWhiteSpace( relativePath ) )
 					relativePath = "";
 			}
-			relativePath = relativePath.TrimEnd( '\\' );
+			relativePath = relativePath.TrimEnd( Path.DirectorySeparatorChar );
 			string encodedPath = _cryptoService.Encode( relativePath );
 			// prepend with id
 			return Id + encodedPath;

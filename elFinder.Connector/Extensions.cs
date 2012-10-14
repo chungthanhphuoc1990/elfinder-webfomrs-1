@@ -23,6 +23,9 @@ namespace elFinder.Connector
 			builder.RegisterType<Service.DefaultVolumeManager>()
 				.As<Service.IVolumeManager>().SingleInstance();
 
+			builder.RegisterType<Service.DefaultImageEditorService>()
+				.As<Service.IImageEditorService>().SingleInstance();
+
 			builder.RegisterType<Service.Base64CryptoService>()
 				.As<Service.ICryptoService>().SingleInstance();
 

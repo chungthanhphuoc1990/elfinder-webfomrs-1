@@ -69,7 +69,7 @@ namespace elFinder.Connector.Command
 			if( oa.init.IsTrue() )
 			{
 				return new Response.InitDirectoryResponse( _config.ApiVersion,
-					new string[0],
+					new string[0], //TODO
 					_config.UploadMaxSize,
 					cwd, 
 					subItems.ToArray(),

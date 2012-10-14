@@ -38,8 +38,12 @@ namespace elFinder.Connector.Service
 		Model.FileModel CopyFile( Model.FileModel fileToCopy, string destinationDirectory, bool cut );
 		Model.DirectoryModel CopyDirectory( Model.DirectoryModel directoryToCopy, string destinationDirectory, bool cut );
 
+		Model.FileModel DuplicateFile( Model.FileModel fileToDuplicate );
+		Model.DirectoryModel DuplicateDirectory( Model.DirectoryModel directoryToDuplicate );
+
 		Model.FileModel[] SaveFiles( string targetDirHash, HttpFileCollection files );
 
 		string GetTextFileContent( Model.FileModel fileToGet );
+		Model.FileModel SetTextFileContent( Model.FileModel fileToModify, string content );
 	}
 }

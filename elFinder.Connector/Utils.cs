@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing.Imaging;
 
 namespace elFinder.Connector
 {
@@ -59,5 +60,21 @@ namespace elFinder.Connector
 		{
 			return val ? 1 : 0;
 		}
+
+		public static ImageFormat GetImageFormatByExt( string ext )
+		{
+			if( ext == "jpg" || ext == "jpeg" )
+				return ImageFormat.Jpeg;
+			if( ext == "png" )
+				return ImageFormat.Png;
+			if( ext == "gif" )
+				return ImageFormat.Gif;
+			if( ext == "tiff" )
+				return ImageFormat.Tiff;
+			if( ext == "bmp" )
+				return ImageFormat.Bmp;
+			return ImageFormat.Jpeg;
+		}
+
 	}
 }
