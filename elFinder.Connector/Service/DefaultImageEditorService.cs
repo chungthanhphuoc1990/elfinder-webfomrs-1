@@ -5,6 +5,7 @@ using System.Text;
 using System.Drawing;
 using System.IO;
 using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 
 namespace elFinder.Connector.Service
 {
@@ -39,6 +40,16 @@ namespace elFinder.Connector.Service
 			return SupportedExtensions.Contains( fileExt );
 		}
 
+		private ImageCodecInfo getEncoder( string fileExt, out EncoderParameters encParams )
+		{
+			// setup standard params (high quality = 90%)
+			encParams = new EncoderParameters( 1 );
+			encParams.Param[ 0 ] = new EncoderParameter( System.Drawing.Imaging.Encoder.Quality, 90L );
+
+			return ImageCodecInfo.GetImageEncoders().First( info =>
+						info.FilenameExtension.IndexOf( fileExt, StringComparison.OrdinalIgnoreCase ) > -1 );
+		}
+
 		//TODO handle error logging because exceptions might be tricky to find otherwise
 		public string CreateThumbnail( string sourceImagePath, string destThumbsDir, string thumbFileName,
 			System.Drawing.Size thumbSize, bool restrictWidth )
@@ -58,10 +69,8 @@ namespace elFinder.Connector.Service
 
 				using( Bitmap inputImage = new Bitmap( sourceImagePath ) )
 				{
-					var encoder = ImageCodecInfo.GetImageEncoders().First( info => 
-						info.FilenameExtension.IndexOf( fileExt, StringComparison.OrdinalIgnoreCase ) > -1 );
-					EncoderParameters encParams = new EncoderParameters( 1 );
-					encParams.Param[ 0 ] = new EncoderParameter( System.Drawing.Imaging.Encoder.Quality, 90L );
+					EncoderParameters encParams = null;
+					var encoder = getEncoder( fileExt, out encParams );
 
 					try
 					{
@@ -125,6 +134,137 @@ namespace elFinder.Connector.Service
 			catch
 			{
 				return null;
+			}
+		}
+
+		private string getTempFileName( string sourceImagePath, string fileExt )
+		{
+			return Path.GetDirectoryName( sourceImagePath ) + Path.DirectorySeparatorChar
+					+ Guid.NewGuid() + "." + fileExt;
+		}
+
+		public bool CropImage( string sourceImagePath, Point topLeft, Size newSize )
+		{
+			try
+			{
+				string fileExt = Path.GetExtension( sourceImagePath ).ToLowerInvariant().Trim( '.' );
+				// create file name of the temp file
+				string tempFilePath = getTempFileName( sourceImagePath, fileExt );
+
+				using( Bitmap inputImage = new Bitmap( sourceImagePath ) )
+				{
+					EncoderParameters encParams = null;
+					var encoder = getEncoder( fileExt, out encParams );
+
+					using( Bitmap tempBmp = new Bitmap( newSize.Width, newSize.Height ) )
+					{
+						// clip image
+						tempBmp.SetResolution( inputImage.HorizontalResolution, inputImage.VerticalResolution );
+						using( Graphics g = Graphics.FromImage( tempBmp ) )
+						{
+							g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBilinear;
+							g.DrawImage( inputImage, 0, 0, new Rectangle( topLeft, newSize ), GraphicsUnit.Pixel );
+						}
+						tempBmp.Save( tempFilePath, encoder, encParams );
+					}
+				}
+				// now replace images
+				File.Delete( sourceImagePath );
+				File.Move( tempFilePath, sourceImagePath );
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		public bool ResizeImage( string sourceImagePath, Size newSize )
+		{
+			try
+			{
+				string fileExt = Path.GetExtension( sourceImagePath ).ToLowerInvariant().Trim( '.' );
+				// create file name of the temp file
+				string tempFilePath = getTempFileName( sourceImagePath, fileExt );
+
+				using( Bitmap inputImage = new Bitmap( sourceImagePath ) )
+				{
+					EncoderParameters encParams = null;
+					var encoder = getEncoder( fileExt, out encParams );
+
+					using( Bitmap tempBmp = new Bitmap( newSize.Width, newSize.Height ) )
+					{
+						// resize image
+						tempBmp.SetResolution( inputImage.HorizontalResolution, inputImage.VerticalResolution );
+						using( Graphics g = Graphics.FromImage( tempBmp ) )
+						{
+							g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBilinear;
+							g.DrawImage( inputImage, new Rectangle( 0, 0, newSize.Width, newSize.Height ) );
+						}
+						tempBmp.Save( tempFilePath, encoder, encParams );
+					}
+				}
+				// now replace images
+				File.Delete( sourceImagePath );
+				File.Move( tempFilePath, sourceImagePath );
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		public bool RotateImage( string sourceImagePath, int rotationDegree )
+		{
+			try
+			{
+				string fileExt = Path.GetExtension( sourceImagePath ).ToLowerInvariant().Trim( '.' );
+				// create file name of the temp file
+				string tempFilePath = getTempFileName( sourceImagePath, fileExt );
+
+				using( Bitmap inputImage = new Bitmap( sourceImagePath ) )
+				{
+					EncoderParameters encParams = null;
+					var encoder = getEncoder( fileExt, out encParams );
+
+					// calculate width and height of the new image
+					float iW = (float)inputImage.Width;
+					float iH = (float)inputImage.Height;
+
+					Matrix whRotation = new Matrix();
+					whRotation.RotateAt( rotationDegree, new PointF( iW / 2f, iH / 2f ) );
+					var tmpDims = new PointF[] { new PointF( iW/2, iH/2 ) };
+					whRotation.TransformVectors( tmpDims );
+					iW = Math.Abs( tmpDims[ 0 ].X*2 );
+					iH = Math.Abs( tmpDims[ 0 ].Y*2 );
+					
+					using( Bitmap tempBmp = new Bitmap( (int)Math.Ceiling( iW ), (int)Math.Ceiling( iH ) ) )
+					{
+						// rotate image
+						tempBmp.SetResolution( inputImage.HorizontalResolution, inputImage.VerticalResolution );
+						using( Graphics g = Graphics.FromImage( tempBmp ) )
+						{
+							g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBilinear;
+							// rotate at the center
+							g.TranslateTransform( tempBmp.Width/2, tempBmp.Height/2 );
+							g.RotateTransform( rotationDegree );
+							g.TranslateTransform( -tempBmp.Width / 2, -tempBmp.Height / 2 );
+							g.DrawImage( inputImage,
+								new Point( ( tempBmp.Width - inputImage.Width ) / 2,
+									( tempBmp.Height - inputImage.Height ) / 2 ) );
+						}
+						tempBmp.Save( tempFilePath, encoder, encParams );
+					}
+				}
+				// now replace images
+				File.Delete( sourceImagePath );
+				File.Move( tempFilePath, sourceImagePath );
+				return true;
+			}
+			catch
+			{
+				return false;
 			}
 		}
 

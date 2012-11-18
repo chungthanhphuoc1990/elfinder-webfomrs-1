@@ -16,7 +16,7 @@ namespace elFinder.Connector
 				if( objToConvert == null )
 					return null;
 				else
-					return Convert.ChangeType( objToConvert, Nullable.GetUnderlyingType( destType ) );
+					return ConvertTo( objToConvert, Nullable.GetUnderlyingType( destType ) );
 			}
 			else if( destType.IsArray )
 			{
@@ -29,6 +29,10 @@ namespace elFinder.Connector
 					retArray.SetValue( ConvertTo( elems[ idx ], arrayElemType ), idx );
 				}
 				return retArray;
+			}
+			else if( destType.IsEnum )
+			{
+				return Enum.Parse( destType, objToConvert.ToString() );
 			}
 			else
 			{

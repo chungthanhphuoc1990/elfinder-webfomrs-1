@@ -34,6 +34,7 @@ namespace elFinder.Connector.Service
 
 		bool DeleteFile( Model.FileModel fileToRemove );
 		bool DeleteDirectory( Model.DirectoryModel directoryToRemove );
+		bool DeleteThumbnailFor( Model.FileModel deleteThumbnailForFile );
 
 		Model.FileModel CopyFile( Model.FileModel fileToCopy, string destinationDirectory, bool cut );
 		Model.DirectoryModel CopyDirectory( Model.DirectoryModel directoryToCopy, string destinationDirectory, bool cut );

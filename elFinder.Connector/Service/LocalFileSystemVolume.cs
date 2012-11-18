@@ -99,7 +99,7 @@ namespace elFinder.Connector.Service
 					if( File.Exists( thumbnailPath ) )
 						thumbnail = hash + fi.Extension;
 					else
-						thumbnail = "1"; // can create
+						thumbnail = Model.FileModel.ThumbnailIsSupported; // can create thumbnail
 				}
 			}
 			return new Model.FileModel( fi.Name, thumbnail, hash,
@@ -358,6 +358,28 @@ namespace elFinder.Connector.Service
 			try
 			{
 				File.Delete( path );
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		public bool DeleteThumbnailFor( Model.FileModel deleteThumbnailForFile )
+		{
+			if( deleteThumbnailForFile == null )
+				return false;
+			// get file extension and compose thumbnail path
+			FileInfo fi = new FileInfo( deleteThumbnailForFile.Name );
+			string thumbnailPath = _config.LocalFSThumbsDirectoryPath + Path.DirectorySeparatorChar
+				+ deleteThumbnailForFile.Hash + fi.Extension;
+			if( !File.Exists( thumbnailPath ) )
+				return false;
+
+			try
+			{
+				File.Delete( thumbnailPath );
 				return true;
 			}
 			catch
@@ -647,21 +669,25 @@ namespace elFinder.Connector.Service
 		public string DecodeHashToPath( string hash, bool toAbsolutePath = true )
 		{
 			// remove volume id from the beginig
-			string directoryHash = hash.Substring( Id.Length );
-			// decode hash to real directory name
-			string directoryRelativePath = _cryptoService.Decode( directoryHash );
+			string fixedHash = hash.Substring( Id.Length );
+			// and remove trailing extension if exists
+			int lastDot = fixedHash.LastIndexOf( '.' );
+			if( lastDot >= 0 )
+				fixedHash = fixedHash.Substring( 0, lastDot );
+			// decode hash to real object name
+			string objectRelativePath = _cryptoService.Decode( fixedHash );
 			if( !toAbsolutePath )
-				return directoryRelativePath;
+				return objectRelativePath;
 			// now get absolute path
 			string absolutePath = _config.LocalFSRootDirectoryPath;
-			if( !string.IsNullOrWhiteSpace(directoryRelativePath) 
-				&& directoryRelativePath[ 0 ] != Path.DirectorySeparatorChar 
+			if( !string.IsNullOrWhiteSpace(objectRelativePath) 
+				&& objectRelativePath[ 0 ] != Path.DirectorySeparatorChar 
 				&& absolutePath.Last() != Path.DirectorySeparatorChar )
 				absolutePath += Path.DirectorySeparatorChar;
-			if( absolutePath.Last() == Path.DirectorySeparatorChar && directoryRelativePath[ 0 ] == Path.DirectorySeparatorChar )
+			if( absolutePath.Last() == Path.DirectorySeparatorChar && objectRelativePath[ 0 ] == Path.DirectorySeparatorChar )
 				// need to remove one of the separators
-				directoryRelativePath = directoryRelativePath.Substring( 1 );
-			absolutePath += directoryRelativePath;
+				objectRelativePath = objectRelativePath.Substring( 1 );
+			absolutePath += objectRelativePath;
 			return absolutePath;
 		}
 

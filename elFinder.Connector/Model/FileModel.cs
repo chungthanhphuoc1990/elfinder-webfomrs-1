@@ -15,7 +15,7 @@ namespace elFinder.Connector.Model
 			string valStr = value.ToString();
 			if( !string.IsNullOrWhiteSpace( valStr ) )
 			{
-				if( valStr == "1" )
+				if( valStr == FileModel.ThumbnailIsSupported )
 					writer.WriteValue( 1 );
 				else
 					writer.WriteValue( valStr );
@@ -36,9 +36,11 @@ namespace elFinder.Connector.Model
 	[JsonObject]
 	public class FileModel : ObjectModel
 	{
+		public const string ThumbnailIsSupported = "1";
+
 		[JsonProperty( "tmb", NullValueHandling=NullValueHandling.Ignore )]
 		[JsonConverter(typeof(TmbConverter) )]
-		public string Thumbnail { get; protected set; }
+		public string Thumbnail { get; set; }
 
 		public FileModel( string name, string thumbnailName, string hash, long size, string parentHash, 
 			DateTime dateModified, string volumeId, bool isReadable, bool isWritable, bool isLocked )

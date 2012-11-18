@@ -58,6 +58,7 @@
     <Compile Include="Command\PasteCommand.cs" />
     <Compile Include="Command\PutCommand.cs" />
     <Compile Include="Command\RenameCommand.cs" />
+    <Compile Include="Command\ResizeCommand.cs" />
     <Compile Include="Command\RmCommand.cs" />
     <Compile Include="Command\TmbCommand.cs" />
     <Compile Include="Command\TreeCommand.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="Response\PutResponse.cs" />
     <Compile Include="Response\GetResponse.cs" />
     <Compile Include="Response\PasteResponse.cs" />
+    <Compile Include="Response\ResizeResponse.cs" />
     <Compile Include="Response\RmResponse.cs" />
     <Compile Include="Response\MkfileResponse.cs" />
     <Compile Include="Response\MkdirResponse.cs" />
