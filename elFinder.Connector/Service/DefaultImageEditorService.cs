@@ -233,11 +233,13 @@ namespace elFinder.Connector.Service
 					float iH = (float)inputImage.Height;
 
 					Matrix whRotation = new Matrix();
-					whRotation.RotateAt( rotationDegree, new PointF( iW / 2f, iH / 2f ) );
-					var tmpDims = new PointF[] { new PointF( iW/2, iH/2 ) };
+					whRotation.Rotate( rotationDegree );
+					// rotate every vertex of our "image rectangle"
+					var tmpDims = new PointF[] { new PointF(0,0), new PointF( iW, 0 ), new PointF( iW, iH ), new PointF( 0, iH ) };
 					whRotation.TransformVectors( tmpDims );
-					iW = Math.Abs( tmpDims[ 0 ].X*2 );
-					iH = Math.Abs( tmpDims[ 0 ].Y*2 );
+					// find extends
+					iW = Math.Abs( tmpDims.Max( x => x.X ) - tmpDims.Min( x => x.X ) );
+					iH = Math.Abs( tmpDims.Max( x => x.Y ) - tmpDims.Min( x => x.Y ) );
 					
 					using( Bitmap tempBmp = new Bitmap( (int)Math.Ceiling( iW ), (int)Math.Ceiling( iH ) ) )
 					{
