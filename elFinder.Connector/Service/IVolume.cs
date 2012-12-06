@@ -42,7 +42,7 @@ namespace elFinder.Connector.Service
 		Model.FileModel DuplicateFile( Model.FileModel fileToDuplicate );
 		Model.DirectoryModel DuplicateDirectory( Model.DirectoryModel directoryToDuplicate );
 
-		Model.FileModel[] SaveFiles( string targetDirHash, HttpFileCollection files );
+		Model.FileModel[] SaveFiles( string targetDirHash, IList<HttpPostedFile> files );
 
 		string GetTextFileContent( Model.FileModel fileToGet );
 		Model.FileModel SetTextFileContent( Model.FileModel fileToModify, string content );

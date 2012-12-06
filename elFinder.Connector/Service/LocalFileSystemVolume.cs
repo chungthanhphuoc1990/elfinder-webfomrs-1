@@ -616,7 +616,7 @@ namespace elFinder.Connector.Service
 			}
 		}
 
-		public Model.FileModel[] SaveFiles( string targetDirHash, HttpFileCollection files )
+		public Model.FileModel[] SaveFiles( string targetDirHash, IList<HttpPostedFile> files )
 		{
 			if( files == null )
 				return new Model.FileModel[ 0 ];

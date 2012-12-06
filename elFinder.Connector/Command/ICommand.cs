@@ -4,18 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Collections.Specialized;
+using System.Linq.Expressions;
 
 namespace elFinder.Connector.Command
 {
 	public class CommandArgs
 	{
 		public NameValueCollection Parameters { get; private set; }
-		public HttpFileCollection Files { get; private set; }
+		public IList<HttpPostedFile> Files { get; private set; }
 
 		public CommandArgs( NameValueCollection parameters, HttpFileCollection files )
 		{
 			Parameters = parameters;
-			Files = files;
+			Files = new List<HttpPostedFile>();
+			foreach( string fileKey in files.AllKeys )
+			{
+				if( files[fileKey] == null )
+					continue;
+				Files.Add( files[ fileKey ] );
+			}
 		}
 
 		public FinalArgType As<FinalArgType>()
