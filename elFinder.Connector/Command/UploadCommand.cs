@@ -41,9 +41,8 @@ namespace elFinder.Connector.Command
 			if( args.Files == null || args.Files.Count == 0 )
 				return new Response.ErrorResponse( "no files" );
 				//return new Response.UploadResponse( new Model.FileModel[ 0 ] );
-
+				
 			var savedFiles = vol.SaveFiles( pa.target, args.Files );
-
 			return new Response.UploadResponse( savedFiles );
 		}
 

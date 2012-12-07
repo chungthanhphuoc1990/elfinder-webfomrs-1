@@ -632,7 +632,10 @@ namespace elFinder.Connector.Service
 			for( int i = 0; i < files.Count; ++i )
 			{
 				HttpPostedFile file = files[ i ];
-				string filePath = targetPath + file.FileName;
+				// handle special upload case, when "Include local directory path when uploading files" in IE is enabled (this might be when in intranet site):
+				// http://blogs.msdn.com/b/webtopics/archive/2009/07/27/uploading-a-file-using-fileupload-control-fails-in-ie8.aspx
+				string fName = Path.GetFileName( file.FileName );
+				string filePath = targetPath + fName;
 				try
 				{
 					file.SaveAs( filePath );
