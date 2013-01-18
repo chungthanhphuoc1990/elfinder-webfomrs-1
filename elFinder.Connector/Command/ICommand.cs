@@ -17,11 +17,11 @@ namespace elFinder.Connector.Command
 		{
 			Parameters = parameters;
 			Files = new List<HttpPostedFile>();
-			foreach( string fileKey in files.AllKeys )
+			for( int i = 0; i < files.Count; ++i )
 			{
-				if( files[fileKey] == null )
+				if( files[ i ] == null )
 					continue;
-				Files.Add( files[ fileKey ] );
+				Files.Add( files[ i ] );
 			}
 		}
 
