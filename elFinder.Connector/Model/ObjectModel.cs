@@ -9,8 +9,6 @@ namespace elFinder.Connector.Model
 	[JsonObject]
 	public abstract class ObjectModel : IEquatable<ObjectModel>
 	{
-		protected static readonly DateTime Epoch = new DateTime( 1970, 1, 1 );
-
 		[JsonProperty( "name" )]
 		public string Name { get; protected set; }
 
@@ -46,7 +44,7 @@ namespace elFinder.Connector.Model
 
 		protected int getTS( DateTime targetDate )
 		{
-			return (int)Math.Round( ( targetDate - Epoch ).TotalSeconds );
+			return (int)( targetDate.ToUnixTicks() / 1000 );
 		}
 
 		#region IEquatable<ObjectModel> Members

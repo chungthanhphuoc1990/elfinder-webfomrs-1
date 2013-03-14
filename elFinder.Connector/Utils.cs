@@ -80,5 +80,25 @@ namespace elFinder.Connector
 			return ImageFormat.Jpeg;
 		}
 
+		public static readonly DateTime Epoch = new DateTime( 1970, 1, 1, 0, 0, 0, DateTimeKind.Utc );
+
+		/// <summary>
+		/// returns the number of milliseconds since Epoch - Jan 1, 1970 (useful for converting C# dates to JS dates)
+		/// </summary>
+		public static double ToUnixTicks( this DateTime time )
+		{
+			time = time.ToUniversalTime();
+			var diff = new TimeSpan( time.Ticks - Epoch.Ticks );
+			return Math.Round( diff.TotalMilliseconds, 0 );
+		}
+
+		public static DateTime FromUnixTicks( double ticks, DateTimeKind kind )
+		{
+			var result = Epoch.AddMilliseconds( ticks );
+
+			return kind == DateTimeKind.Utc
+					   ? result
+					   : result.ToLocalTime();
+		}
 	}
 }
