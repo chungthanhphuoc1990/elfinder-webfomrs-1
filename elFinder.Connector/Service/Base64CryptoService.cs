@@ -14,17 +14,17 @@ namespace elFinder.Connector.Service
 			byte[] bytes = Encoding.UTF8.GetBytes( input );
 			string encoded = Convert.ToBase64String( bytes, Base64FormattingOptions.None );
 			// need to replace some special chars to make whole string compatible
-			encoded = encoded.Replace( '+', '-' )
-							.Replace( '/', '.' )
-							.Replace( '=', '_' );
+			encoded = encoded.Replace( '+', '«' )
+							.Replace( '/', '»' )
+							.Replace( '=', '§' );
 			return encoded;
 		}
 
 		public string Decode( string hash )
 		{
-			hash = hash.Replace( '-', '+' )
-							.Replace( '.', '/' )
-							.Replace( '_', '=' );
+			hash = hash.Replace( '«', '+' )
+							.Replace( '»', '/' )
+							.Replace( '§', '=' );
 			byte[] bytes = Convert.FromBase64String( hash );
 			string decoded = Encoding.UTF8.GetString( bytes );
 			return decoded;
