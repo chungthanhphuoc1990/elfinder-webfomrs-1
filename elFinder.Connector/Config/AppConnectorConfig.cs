@@ -33,13 +33,25 @@ namespace elFinder.Connector.Config
 		[ConfigurationProperty( "localFSRootDirectoryPath", IsRequired = true )]
 		public string LocalFSRootDirectoryPath
 		{
-			get { return (string)_config[ "localFSRootDirectoryPath" ]; }
+            get
+            {
+	            var path = (string)_config[ "localFSRootDirectoryPath" ];
+                return (path.Length > 0 && path[0] == '~') 
+					? System.Web.HttpContext.Current.Server.MapPath(path)
+                    : path;
+            }
 		}
 
 		[ConfigurationProperty( "localFSThumbsDirectoryPath", IsRequired = true )]
 		public string LocalFSThumbsDirectoryPath
 		{
-			get { return (string)_config[ "localFSThumbsDirectoryPath" ]; }
+            get
+            {
+				var path = (string)_config[ "localFSThumbsDirectoryPath" ];
+				return ( path.Length > 0 && path[ 0 ] == '~' )
+					? System.Web.HttpContext.Current.Server.MapPath( path )
+					: path;
+            }
 		}
 
 		[ConfigurationProperty( "defaultVolumeName", IsRequired = true )]
