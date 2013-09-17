@@ -13,6 +13,7 @@
     <RootNamespace>elFinder.WebTest</RootNamespace>
     <AssemblyName>elFinder.WebTest</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -197,6 +198,10 @@
     <Content Include="Site.Master" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\elFinder.Connector.Integration.Autofac\elFinder.Connector.Integration.Autofac.csproj">
+      <Project>{5B277E31-2231-409B-819E-A46534B9CE99}</Project>
+      <Name>elFinder.Connector.Integration.Autofac</Name>
+    </ProjectReference>
     <ProjectReference Include="..\elFinder.Connector\elFinder.Connector.csproj">
       <Project>{53FE1298-2B81-4BAE-9255-1C9B7589C644}</Project>
       <Name>elFinder.Connector</Name>

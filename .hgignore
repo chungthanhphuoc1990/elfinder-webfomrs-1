@@ -1,0 +1,14 @@
+syntax: glob
+*.pdb
+elFinder.Connector/obj
+elFinder.Connector.Integration.Autofac/bin
+elFinder.MVCTest/bin
+elFinder.Connector/bin
+*.suo
+elFinder.MVCTest/obj
+elFinder.WebTest/bin
+elFinder.WebTest/obj
+*.cache
+*.csproj.user
+elFinder.Connector.Integration.Autofac/obj
+elFinder.Connector.Integration.Autofac/bin

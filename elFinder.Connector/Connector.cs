@@ -3,30 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
-using Autofac;
 using System.Collections;
 using System.Collections.Specialized;
+using elFinder.Connector.Service;
 
 namespace elFinder.Connector
 {
 	public class Connector : IHttpHandler
 	{
-		private static IContainer _container;
-
-		private static object _containerMutex = new object();
-
-		internal static IContainer Container
-		{
-			get { return _container; }
-			set
-			{
-				lock( _containerMutex )
-				{
-					_container = value;
-				}
-			}
-		}
-
 		#region IHttpHandler Members
 
 		public bool IsReusable
@@ -36,7 +20,8 @@ namespace elFinder.Connector
 
 		public void ProcessRequest( HttpContext context )
 		{
-			using( _container.BeginLifetimeScope() )
+			var resolver = DependencyResolver.Resolver;
+			using( resolver.BeginResolverScope() )
 			{
 				var parameters = getParameters( context.Request );
 				string cmd = parameters["cmd"];
@@ -45,7 +30,7 @@ namespace elFinder.Connector
 					sendError( context, "Command not set" );
 					return;
 				}
-				var foundCmd = _container.Resolve<IEnumerable<Command.ICommand>>().FirstOrDefault( x => x.Name.Equals( cmd, StringComparison.OrdinalIgnoreCase ) );
+				var foundCmd = resolver.Resolve<IEnumerable<Command.ICommand>>().FirstOrDefault( x => x.Name.Equals( cmd, StringComparison.OrdinalIgnoreCase ) );
 				if( foundCmd == null )
 				{
 					sendError( context, "errUnknownCmd" );

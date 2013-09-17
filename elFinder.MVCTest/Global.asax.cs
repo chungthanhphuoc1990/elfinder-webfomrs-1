@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Autofac;
-using elFinder.Connector;
+using elFinder.Connector.Integration.Autofac;
 
 namespace elFinder.MVCTest
 {
@@ -40,10 +40,10 @@ namespace elFinder.MVCTest
 
 			// register IoC
 			var builder = new ContainerBuilder();
-			builder.RegisterElFinderConnector();
+			builder.RegisterElFinderConnectorDefault();
 			_container = builder.Build();
 			// need also to set container in elFinder module
-			_container.SetAsElFinderResolver();
+			_container.SetAsElFinderDependencyResolver();
 
 			RegisterGlobalFilters( GlobalFilters.Filters );
 			RegisterRoutes( RouteTable.Routes );

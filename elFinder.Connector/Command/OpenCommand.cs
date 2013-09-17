@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections.Specialized;
+using elFinder.Connector.Model;
 
 namespace elFinder.Connector.Command
 {
@@ -65,7 +66,7 @@ namespace elFinder.Connector.Command
 
 			// get files in our CWD
 			subItems.AddRange( vol.GetFiles( cwd ) );
-
+			
 			if( oa.init.IsTrue() )
 			{
 				return new Response.InitDirectoryResponse( _config.ApiVersion,

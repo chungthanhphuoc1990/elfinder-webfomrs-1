@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Web Developer Express 2010
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elFinder.Connector", "elFinder.Connector\elFinder.Connector.csproj", "{53FE1298-2B81-4BAE-9255-1C9B7589C644}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elFinder.MVCTest", "elFinder.MVCTest\elFinder.MVCTest.csproj", "{CC94455E-BC20-4920-8408-364245E4A69F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elFinder.WebTest", "elFinder.WebTest\elFinder.WebTest.csproj", "{A24298E6-0693-458A-A913-E922CD83E9C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elFinder.Connector.Integration.Autofac", "elFinder.Connector.Integration.Autofac\elFinder.Connector.Integration.Autofac.csproj", "{5B277E31-2231-409B-819E-A46534B9CE99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +27,10 @@ Global
 		{A24298E6-0693-458A-A913-E922CD83E9C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A24298E6-0693-458A-A913-E922CD83E9C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A24298E6-0693-458A-A913-E922CD83E9C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B277E31-2231-409B-819E-A46534B9CE99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B277E31-2231-409B-819E-A46534B9CE99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B277E31-2231-409B-819E-A46534B9CE99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B277E31-2231-409B-819E-A46534B9CE99}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

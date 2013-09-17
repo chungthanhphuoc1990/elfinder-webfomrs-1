@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Security;
 using System.Web.SessionState;
 using Autofac;
-using elFinder.Connector;
+using elFinder.Connector.Integration.Autofac;
 
 namespace elFinder.WebTest
 {
@@ -19,10 +19,10 @@ namespace elFinder.WebTest
 
 			// register IoC
 			var builder = new ContainerBuilder();
-			builder.RegisterElFinderConnector();
+			builder.RegisterElFinderConnectorDefault();
 			_container = builder.Build();
 			// need also to set container in elFinder module
-			_container.SetAsElFinderResolver();
+			_container.SetAsElFinderDependencyResolver();
 		}
 
 		void Application_End( object sender, EventArgs e )
